@@ -8,9 +8,10 @@ game.graphics = (
       context.restore();
     };
     
-    const Sprite = ({sheetSrc, spriteX, spriteY, spriteWidth, spriteHeight, timePerFrame, numFrames}) => {
+    const Sprite = ({sheetSrc, spriteX, spriteY, spriteWidth, spriteHeight, timePerFrame, numFrames, cols}) => {
       timePerFrame = timePerFrame ?? 100;
       numFrames = numFrames ?? 1;
+      cols = cols ?? numFrames;
 
       let ready = false;
 
@@ -31,7 +32,7 @@ game.graphics = (
           context.translate(x+width/2, y+height/2);
           context.rotate(rot * Math.PI / 180);
           context.translate(-x-width/2, -y-height/2);
-          context.drawImage(image, spriteX+currentFrame*spriteWidth, spriteY, spriteWidth, spriteHeight, x, y, width, height);
+          context.drawImage(image, spriteX+(currentFrame % cols)*spriteWidth, spriteY+Math.floor(currentFrame / cols)*spriteHeight, spriteWidth, spriteHeight, x, y, width, height);
           context.restore();
         }
       }

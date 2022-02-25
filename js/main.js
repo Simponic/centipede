@@ -8,7 +8,10 @@ game.main = (
 
     const initialize = () => {
       game.objects = [
-        game.Object({x: 100, y: 100, dx: 0.5, dy: 0.5, width: 80, height: 80, rot: 0, drot: 0.5, sprite: game.sprites.centipedeHead}),
+        game.Object({x: 100, y: 100, dx: 0.5, dy: 0, width: 80, height: 80, rot: 0, drot: 0.5, sprite: game.sprites.centipedeHead}),
+        game.Object({x: 300, y: 100, dx: 0, dy: 0, width: 160, height: 80, rot: 0, drot: 0, sprite: game.sprites.spider}),
+        game.Object({x: 800, y: 100, dx: 0, dy: 0, width: 80, height: 80, rot: 0, drot: 0, sprite: game.sprites.flea}),
+        game.Object({x: 800, y: 500, dx: 0, dy: 0, width: 160, height: 80, rot: 0, drot: 0, sprite: game.sprites.scorpion}),
       ];
     };
 
