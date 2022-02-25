@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+}
+
+.canvas-holder canvas {
+  padding: 0;
+  margin: auto;
+  display: block;
+  height: 100vh;
+  width: auto;
+  max-width: 100%;
+}
