@@ -1,40 +1,51 @@
 game.graphics = (
   (context) => {
+    context.imageSmoothingEnabled = false;
     const clear = () => {
-      context.save();
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      context.rect(0, 0, game.width, game.height);
-      context.fill();
-      context.restore();
+      context.clearRect(0, 0, game.width, game.height);
     };
     
-    const Sprite = ({sheetSrc, spriteX, spriteY, spriteWidth, spriteHeight, timePerFrame, numFrames, cols}) => {
+    const Sprite = ({sheetSrc, spriteX, spriteY, spriteWidth, spriteHeight, timePerFrame, cols, rows, numFrames, drawFunction}) => {
       timePerFrame = timePerFrame ?? 100;
       numFrames = numFrames ?? 1;
       cols = cols ?? numFrames;
+      rows = rows ?? 1;
 
       let ready = false;
 
-      const image = new Image();
-      image.src = sheetSrc;
-      image.onload = () => { ready = true; };
+      let image;
+      if (sheetSrc) {
+        image = new Image();
+        image.src = sheetSrc;
+        image.onload = () => { ready = true; };
+      }
 
       let currentFrame = 0;
       let currentTime = 0;
-      const draw = (elapsedTime, {x, y, rot, width, height}) => {
-        if (ready) {
-          currentTime += elapsedTime;
-          if (currentTime > timePerFrame) {
-            currentTime = 0;
-            currentFrame = (currentFrame + 1) % numFrames;
+
+      let draw;
+      if (!drawFunction) {
+        draw = (elapsedTime, {x, y, rot, width, height}) => {
+          if (ready) {
+            if (numFrames > 1) {
+              currentTime += elapsedTime;
+              if (currentTime > timePerFrame) {
+                currentTime = 0;
+                currentFrame = (currentFrame + 1) % numFrames;
+              }
+            }
+            context.save();
+            context.translate(x+width/2, y+height/2);
+            context.rotate(rot * Math.PI / 180);
+            context.translate(-x-width/2, -y-height/2);
+            const row = currentFrame % rows;
+            const col = Math.floor(currentFrame / rows);
+            context.drawImage(image, spriteX+col*spriteWidth, spriteY+row*spriteHeight, spriteWidth, spriteHeight, x, y, width, height);
+            context.restore();
           }
-          context.save();
-          context.translate(x+width/2, y+height/2);
-          context.rotate(rot * Math.PI / 180);
-          context.translate(-x-width/2, -y-height/2);
-          context.drawImage(image, spriteX+(currentFrame % cols)*spriteWidth, spriteY+Math.floor(currentFrame / cols)*spriteHeight, spriteWidth, spriteHeight, x, y, width, height);
-          context.restore();
-        }
+        };
+      } else {
+        draw = (elapsedTime, drawSpec) => drawFunction(elapsedTime, drawSpec, context);
       }
       return { draw };
     }
