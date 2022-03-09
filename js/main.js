@@ -7,11 +7,13 @@ game.main = (
     const handleInput = keyboard.update;  
 
     const initialize = () => {
-      game.player = game.playerObject({x: 100, y: 900, width: 50, height: 50, sprite: game.sprites.ship});
+      game.player = game.Player({x: 100, y: 900, width: 40, height: 40, sprite: game.sprites.ship});
       keyboard.registerCommand("ArrowUp", game.player.moveUp);
       keyboard.registerCommand("ArrowDown", game.player.moveDown);
       keyboard.registerCommand("ArrowLeft", game.player.moveLeft);
       keyboard.registerCommand("ArrowRight", game.player.moveRight);
+      game.Mushroom.initializeMushrooms({width: 40, height: 40});
+      game.Mushroom.placeRandomMushrooms();
       game.objects = [
         game.player,
       ];
@@ -25,6 +27,7 @@ game.main = (
     const render = (elapsedTime) => {
       graphics.clear();
       game.objects.map((obj) => obj.draw(elapsedTime));
+      game.Mushroom.drawMushrooms();
     };
 
     let iters = 0;

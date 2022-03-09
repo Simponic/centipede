@@ -1,10 +1,10 @@
-game.playerObject = (spec) => {
+game.Player = (spec) => {
   const object = game.Object(spec);
   const parentUpdate = object.update; 
   object.update = (elapsedTime) => {
     parentUpdate(elapsedTime);
     object.x = Math.max(0, Math.min(object.x, game.width - object.width));
-    object.y = Math.max(game.height - 500, Math.min(object.y, game.height - object.height));
+    object.y = Math.max(game.maxPlayerHeight, Math.min(object.y, game.height - object.height));
     object.dx = object.dy = 0;
   };
 

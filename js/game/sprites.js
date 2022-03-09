@@ -95,7 +95,7 @@ game.sprites = {
     rows: 2,
     timePerFrame: 500,
   }),
-  poisonMushrooms: [...Array(4).keys()].map(i => 
+  poisonMushrooms: [3,2,1,0].map(i => 
     game.graphics.Sprite({
       sheetSrc: "assets/images/centipede-assets.png",
       spriteX: 320 + i*40,
@@ -106,7 +106,7 @@ game.sprites = {
       timePerFrame: 0,
     })
   ),
-  regularMushrooms: [...Array(4).keys()].map(i => 
+  regularMushrooms: [3,2,1,0].map(i => 
     game.graphics.Sprite({
       sheetSrc: "assets/images/centipede-assets.png",
       spriteX: 320 + i*40,
