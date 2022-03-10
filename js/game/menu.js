@@ -62,7 +62,6 @@ menu.draw = () => {
   else if (menu.state == "controls") {
     menuElement.innerHTML += `
       <div>
-        <div class='menu-button' onclick='menu.setState("controls")'>BRUH</div>
         <p>
           Move left: <button id="moveLeft" onclick='menu.listenFor("moveLeft", "moveLeft")'>${menu.controls.moveLeft}</button>
           <br>
@@ -83,3 +82,5 @@ menu.draw = () => {
     menuElement.innerHTML += "<div class='menu-button' onclick='menu.setState(\"main\")'>Back</div>"
   }
 }
+
+menu.initialize();

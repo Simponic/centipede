@@ -1,13 +1,17 @@
 const game = {
   stopped: false,
-  width: 1920,
-  height: 1080,
+  width: 1400,
+  height: 1000,
   level: 1,
-  maxPlayerHeight: 1080-400
+  maxPlayerHeight: 1000-40*6,
 };
 
 game.resume = () => {
   game.stopped = false;
   game.lastTimeStamp = performance.now();
+  menu.reRegisterKeys();
   requestAnimationFrame(gameLoop);
 }
+
+game.getObjects = () => [game.player, ...game.bullets, ...game.mushrooms];
+game.getBulletCollidableObjects = () => [...game.mushrooms];
