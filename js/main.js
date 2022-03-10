@@ -1,4 +1,4 @@
-lastTimeStamp = performance.now();
+game.lastTimeStamp = performance.now();
 
 game.keyboard = game.input.Keyboard();
 const handleInput = game.keyboard.update;  
@@ -28,8 +28,8 @@ const render = (elapsedTime) => {
 };
 
 const gameLoop = (time) => {
-  const elapsedTime = time - lastTimeStamp;
-  lastTimeStamp = time;
+  const elapsedTime = time - game.lastTimeStamp;
+  game.lastTimeStamp = time;
 
   handleInput(elapsedTime);
   update(elapsedTime);

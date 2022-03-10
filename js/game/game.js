@@ -8,5 +8,6 @@ const game = {
 
 game.resume = () => {
   game.stopped = false;
+  game.lastTimeStamp = performance.now();
   requestAnimationFrame(gameLoop);
 }
