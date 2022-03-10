@@ -5,3 +5,8 @@ const game = {
   level: 1,
   maxPlayerHeight: 1080-400
 };
+
+game.resume = () => {
+  game.stopped = false;
+  requestAnimationFrame(gameLoop);
+}

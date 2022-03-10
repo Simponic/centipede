@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  font-family: Lucida Sans Typewriter,Lucida Console,monaco,Bitstream Vera Sans Mono,monospace;
 }
 
 .canvas-holder canvas {
@@ -10,4 +11,30 @@ body {
   width: auto;
   max-width: 100%;
   background-color: black;
+}
+
+.menu {
+  text-align:center;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  position:absolute;
+
+  background-color: rgba(255,255,255,0.75);
+  border: 1px solid #fff;
+  border-radius: 5px;
+  padding: 12px;
+}
+
+.menu-button {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.menu-button:hover {
+  background-color: #d0d0d0;
 }

@@ -1,51 +1,44 @@
-game.main = (
-  (graphics, input) => {
-    "use strict";
-    let lastTimeStamp = performance.now();
+lastTimeStamp = performance.now();
 
-    let keyboard = input.Keyboard();
-    const handleInput = keyboard.update;  
+game.keyboard = game.input.Keyboard();
+const handleInput = game.keyboard.update;  
 
-    const initialize = () => {
-      game.player = game.Player({x: 100, y: 900, width: 40, height: 40, sprite: game.sprites.ship});
-      keyboard.registerCommand("ArrowUp", game.player.moveUp);
-      keyboard.registerCommand("ArrowDown", game.player.moveDown);
-      keyboard.registerCommand("ArrowLeft", game.player.moveLeft);
-      keyboard.registerCommand("ArrowRight", game.player.moveRight);
-      game.Mushroom.initializeMushrooms({width: 40, height: 40});
-      game.Mushroom.placeRandomMushrooms();
-      game.objects = [
-        game.player,
-      ];
-    };
+const initialize = () => {
+  game.Mushroom.initializeMushrooms({width: 40, height: 40});
+  game.Mushroom.placeRandomMushrooms();
 
-    const update = (elapsedTime) => {
-      game.objects.map((obj) => obj.update(elapsedTime));
-      game.player.update(elapsedTime);
-    };
+  game.player = game.Player({x: 100, y: 900, width: 40, height: 40, sprite: game.sprites.ship});
+  game.bullets = [];
 
-    const render = (elapsedTime) => {
-      graphics.clear();
-      game.objects.map((obj) => obj.draw(elapsedTime));
-      game.Mushroom.drawMushrooms();
-    };
+  menu.initialize(); 
+  menu.reRegisterKeys();
+};
 
-    let iters = 0;
-    const gameLoop = (time) => {
-      iters++;
-      const elapsedTime = time - lastTimeStamp;
-      lastTimeStamp = time;
+const update = (elapsedTime) => {
+  game.player.update(elapsedTime);
+  game.bullets.map((bullet) => bullet.update(elapsedTime));
+  game.bullets = game.bullets.filter((bullet) => bullet.alive);
+};
 
-      handleInput(elapsedTime);
-      update(elapsedTime);
-      render(elapsedTime);
+const render = (elapsedTime) => {
+  game.graphics.clear();
+  game.bullets.map((bullet) => bullet.draw(elapsedTime));
+  game.player.draw(elapsedTime);
+  game.Mushroom.drawMushrooms();
+};
 
-      if (!game.stopped) {
-        requestAnimationFrame(gameLoop);
-      }
-    };
+const gameLoop = (time) => {
+  const elapsedTime = time - lastTimeStamp;
+  lastTimeStamp = time;
 
-    initialize();
+  handleInput(elapsedTime);
+  update(elapsedTime);
+  render(elapsedTime);
+
+  if (!game.stopped) {
     requestAnimationFrame(gameLoop);
   }
-)(game.graphics, game.input);
+};
+
+initialize();
+requestAnimationFrame(gameLoop);

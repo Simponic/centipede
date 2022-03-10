@@ -12,6 +12,9 @@ game.input = (() => {
     const registerCommand = (key, handler) => {
       handlers[key] = handler;
     };
+    const unregisterCommand = (key) => {
+      delete handlers[key];
+    }
     const update = (elapsedTime) => {
       for (let key in keys) {
         if (keys.hasOwnProperty(key)) {
@@ -23,7 +26,7 @@ game.input = (() => {
     };
     window.addEventListener("keydown", keyPress);
     window.addEventListener("keyup", keyRelease);
-    return {keys, handlers, registerCommand, update};
+    return {keys, handlers, registerCommand, unregisterCommand, update};
   }
   return { Keyboard };
 })();
