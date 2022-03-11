@@ -1,9 +1,8 @@
 const game = {
   stopped: false,
-  width: 1400,
-  height: 1000,
+  width: document.getElementById('game-canvas').width,
+  height: document.getElementById('game-canvas').height,
   level: 1,
-  maxPlayerHeight: 1000-40*6,
 };
 
 game.resume = () => {
@@ -13,5 +12,6 @@ game.resume = () => {
   requestAnimationFrame(gameLoop);
 }
 
-game.getObjects = () => [game.player, ...game.bullets, ...game.mushrooms];
-game.getBulletCollidableObjects = () => [...game.mushrooms];
+game.getObjects = () => [game.player, ...game.bullets, ...game.mushrooms, ...game.centipedes];
+game.getBulletCollidableObjects = () => [...game.mushrooms, ...game.centipedes];
+game.getMushroomCollidableObjects = () => [game.player, ...game.centipedes];

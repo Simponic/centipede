@@ -7,13 +7,15 @@ game.Mushroom = (spec) => {
   objectSpec.x = mushX * objectSpec.width;
   objectSpec.y = mushY * objectSpec.height;
   const object = {...spec, ...game.Object(objectSpec)};
-  object.onBulletHit = () => {
+  object.onBulletCollision = () => {
     object.state--;
     game.score += 5;
+    game.sounds.mushroom_hit.load();
+    game.sounds.mushroom_hit.play();
   }; 
   object.draw = (elapsedTime) => {
     if (object.state) {
-      object.sprite = object.poisoned ? game.sprites.poisonedMushrooms[object.state-1] : game.sprites.regularMushrooms[object.state-1];
+      object.sprite = object.poisoned ? game.sprites.poisonMushrooms[object.state-1] : game.sprites.regularMushrooms[object.state-1];
       object.sprite.draw(elapsedTime, object);
     }
   }

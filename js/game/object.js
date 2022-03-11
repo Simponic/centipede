@@ -6,7 +6,19 @@ game.Object = (spec={x, y, dx, dy, rot, drot, width, height, sprite}) => {
   spec.alive = spec.alive ?? true;
   
   spec.intersects = (other) => {
-    return !(spec.x + spec.width < other.x || spec.x > other.x + other.width || spec.y + spec.height < other.y || spec.y > other.y + other.height);
+    if (spec.x + spec.width < other.x) {
+      return false;
+    }
+    if (spec.x > other.x + other.width) {
+      return false;
+    }
+    if (spec.y + spec.height < other.y) {
+      return false;
+    }
+    if (spec.y > other.y + other.height) {
+      return false;
+    }
+    return true;
   }
 
   spec.update = (elapsedTime) => {

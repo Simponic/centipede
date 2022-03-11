@@ -15,7 +15,7 @@ game.sprites = {
     spriteWidth: 40,
     spriteHeight: 40,
     numFrames: 4,
-    timePerFrame: 100,
+    timePerFrame: 800,
   }),
   spider: game.graphics.Sprite({
     sheetSrc: "assets/images/centipede-assets.png",
@@ -95,7 +95,7 @@ game.sprites = {
     rows: 2,
     timePerFrame: 500,
   }),
-  poisonMushrooms: [3,2,1,0].map(i => 
+  regularMushrooms: [3,2,1,0].map(i => 
     game.graphics.Sprite({
       sheetSrc: "assets/images/centipede-assets.png",
       spriteX: 320 + i*40,
@@ -106,7 +106,7 @@ game.sprites = {
       timePerFrame: 0,
     })
   ),
-  regularMushrooms: [3,2,1,0].map(i => 
+  poisonMushrooms: [3,2,1,0].map(i => 
     game.graphics.Sprite({
       sheetSrc: "assets/images/centipede-assets.png",
       spriteX: 320 + i*40,
