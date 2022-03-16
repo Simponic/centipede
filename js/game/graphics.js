@@ -21,16 +21,16 @@ game.graphics = (
       }
 
       let currentFrame = 0;
-      let currentTime = 0;
+      let lastTime = performance.now();
 
       let draw;
       if (!drawFunction) {
-        draw = (elapsedTime, {x, y, rot, width, height}) => {
+        draw = (_elapsedTime, {x, y, rot, width, height}) => {
+
           if (ready) {
             if (numFrames > 1) {
-              currentTime += elapsedTime;
-              if (currentTime > timePerFrame) {
-                currentTime = 0;
+              if (performance.now()-lastTime > timePerFrame) {
+                lastTime = performance.now();
                 currentFrame = (currentFrame + 1) % numFrames;
               }
             }
@@ -47,7 +47,7 @@ game.graphics = (
       } else {
         draw = (elapsedTime, drawSpec) => drawFunction(elapsedTime, drawSpec, context);
       }
-      return { draw };
+      return { draw, timePerFrame, numFrames };
     }
 
     return { clear, Sprite };

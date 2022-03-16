@@ -10,9 +10,10 @@ const initialize = () => {
   game.player = game.Player({x: game.width/2 - 20, y: game.height-40, width: 40, height: 40, sprite: game.sprites.ship});
 
   game.bullets = [];
+  game.explosions = [];
   game.mushroomDims = {width: 40, height: 40};
   game.mushrooms = game.Mushroom.generateMushrooms(game.mushroomDims);
-  game.centipedes = game.Centipede.initializeCentipedes(5+game.level*3);
+  game.centipede = game.Centipede({rot: 180, width: 40, height: 40, dx: 0.2, dy: 0});
 };
 
 const update = (elapsedTime) => {
@@ -22,15 +23,12 @@ const update = (elapsedTime) => {
     objects.map((object => object.onMushroomCollision ? object.onMushroomCollision(game.mushrooms[i]) : null));
   });
   game.bullets.map((bullet) => game.getBulletCollidableObjects().filter((object) => object.intersects(bullet))).map((objects, i) => {
-    if (objects.length > 0) {
-      game.bullets[i].alive = false;
-    }
-    objects.map((object) => object.onBulletCollision ? object.onBulletCollision() : null)
+    objects.map((object) => object.onBulletCollision ? object.onBulletCollision(game.bullets[i]) : null)
   })
 
   game.bullets = game.bullets.filter((bullet) => bullet.alive);
+  game.explosions = game.explosions.filter((explosion) => explosion.alive);
   game.mushrooms = game.mushrooms.filter((mushroom) => mushroom.state > 0);
-  game.centipedes = game.centipedes.filter((centipede) => centipede.alive);
   game.getObjects().map((object) => object.update(elapsedTime));
 };
 

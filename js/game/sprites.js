@@ -15,7 +15,7 @@ game.sprites = {
     spriteWidth: 40,
     spriteHeight: 40,
     numFrames: 4,
-    timePerFrame: 800,
+    timePerFrame: 100,
   }),
   spider: game.graphics.Sprite({
     sheetSrc: "assets/images/centipede-assets.png",
@@ -82,7 +82,7 @@ game.sprites = {
     spriteHeight: 40,
     cols: 4,
     rows: 2,
-    timePerFrame: 500,
+    timePerFrame: 30,
   }),
   explosionSmall: game.graphics.Sprite({
     sheetSrc: "assets/images/centipede-assets.png",
@@ -93,7 +93,7 @@ game.sprites = {
     spriteHeight: 40,
     cols: 3,
     rows: 2,
-    timePerFrame: 500,
+    timePerFrame: 30,
   }),
   regularMushrooms: [3,2,1,0].map(i => 
     game.graphics.Sprite({

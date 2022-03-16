@@ -12,6 +12,6 @@ game.resume = () => {
   requestAnimationFrame(gameLoop);
 }
 
-game.getObjects = () => [game.player, ...game.bullets, ...game.mushrooms, ...game.centipedes];
-game.getBulletCollidableObjects = () => [...game.mushrooms, ...game.centipedes];
-game.getMushroomCollidableObjects = () => [game.player, ...game.centipedes];
+game.getObjects = () => [game.player, ...game.bullets, ...game.mushrooms, game.centipede, ...game.explosions];
+game.getBulletCollidableObjects = () => [...game.mushrooms, game.centipede];
+game.getMushroomCollidableObjects = () => [game.player, game.centipede];

@@ -1,4 +1,3 @@
-game.mushrooms = [];
 game.Mushroom = (spec) => {
   spec.state = spec.state ?? 4;
   spec.poisoned = spec.poisoned ?? false;
@@ -7,11 +6,14 @@ game.Mushroom = (spec) => {
   objectSpec.x = mushX * objectSpec.width;
   objectSpec.y = mushY * objectSpec.height;
   const object = {...spec, ...game.Object(objectSpec)};
-  object.onBulletCollision = () => {
-    object.state--;
-    game.score += 5;
-    game.sounds.mushroom_hit.load();
-    game.sounds.mushroom_hit.play();
+  object.onBulletCollision = (bullet) => {
+    if (bullet.alive) {
+      object.state--;
+      game.score += 5;
+      game.sounds.mushroom_hit.load();
+      game.sounds.mushroom_hit.play();
+    }
+    bullet.alive = false;
   }; 
   object.draw = (elapsedTime) => {
     if (object.state) {
@@ -21,6 +23,14 @@ game.Mushroom = (spec) => {
   }
   return object;
 };
+
+game.Mushroom.toMushCoords = (coords) => {
+  return {mushX: Math.ceil(coords.x / game.mushroomDims.width), mushY: Math.ceil(coords.y / game.mushroomDims.height)};
+}
+
+game.Mushroom.toGameCoords = (mushCoords) => {
+  return {x: mushCoords.mushX * game.mushroomDims.width, y: mushCoords.mushY * game.mushroomDims.height};
+}
 
 game.Mushroom.generateMushrooms = (mushroomSpec) => {
   const mushPositions = new Set();

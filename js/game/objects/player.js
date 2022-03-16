@@ -51,6 +51,7 @@ game.Player = (spec) => {
 
   object.onMushroomCollision = (mushroom) => {
     if (mushroom.poisoned) {
+      mushroom.state = 0;
       object.poison();
     }
   }
