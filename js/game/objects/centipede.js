@@ -1,28 +1,64 @@
 game.CentipedePiece = (spec) => {
   const object = game.Object(spec);
+  object.poisonedTimer = 1000;
   const parentUpdate = object.update;
-  let oldMushroomPos = game.Mushroom.toMushCoords(object);
+  object.turningState = {
+    turning: false,
+    turnDirectionY: 1,
+    objectStateBeforeTurn: null,
+  };
   object.turn = () => {
-    if (object.dy === 0) {
-      object.rot += 90;
+    object.turningState.objectStateBeforeTurn = {dx: object.dx, dy: object.dy, x: object.x, y: object.y};
+    object.turningState.turning = true;
+    if (object.y >= game.height - object.height) {
+      object.turningState.turnDirectionY = -1;
     }
-  }
-  object.update = (elapsedTime) => {
-    parentUpdate(elapsedTime);
-    if (object.x > game.width + object.width) {
-      object.alive = false;
+    if (object.y <= 0) {
+      object.turningState.turnDirectionY = 1;
     }
   };
+  object.update = (elapsedTime) => {
+    if (object.poisoned) {
+      object.turningState.turning = false;
+    }
+    else if ((object.x+object.width > game.width || object.x < 0) && !object.turningState.turning) {
+      object.x = Math.min(Math.max(object.x, 0), game.width - object.width);
+      object.turn();
+    }
+    if (object.turningState.turning) {
+      object.dx = 0;
+      object.dy = Math.abs(object.turningState.objectStateBeforeTurn.dx) * object.turningState.turnDirectionY;
+      object.rot = object.dy > 0 ? -90 : 90;
+      if (Math.abs(object.turningState.objectStateBeforeTurn.y - object.y) >= object.height) {
+        object.y = object.turningState.objectStateBeforeTurn.y + object.height * object.turningState.turnDirectionY;
+        object.dx = -object.turningState.objectStateBeforeTurn.dx;
+        object.rot = object.dx > 0 ? 180 : 0;
+        object.dy = 0;
+        object.turningState.turning = false;
+      }
+    }
+    parentUpdate(elapsedTime);
+    object.y = Math.min(Math.max(object.y, 0), game.height - object.height);
+  };
+  object.onMushroomCollision = (mushroom) => {
+    if (mushroom.poisoned && object.dy === 0) {
+      object.poison();
+      return;
+    }
+    if (!object.turningState.turning) {
+      if (mushroom.x < object.x && object.dx > 0) {
+        return;
+      }
+      object.turn();
+    }
+  }
   return object;
 }
 
 game.Centipede = (spec) => {
   const segments = [
-    game.CentipedePiece({...spec, x: -160, y: 0, sprite: game.sprites.centipedeBody}),
-    game.CentipedePiece({...spec, x: -120, y: 0, sprite: game.sprites.centipedeBody}),
-    game.CentipedePiece({...spec, x: -80, y: 0, sprite: game.sprites.centipedeBody}),
-    game.CentipedePiece({...spec, x: -40, y: 0, sprite: game.sprites.centipedeBody}),
-    game.CentipedePiece({...spec, x: 0, y: 0, sprite: game.sprites.centipedeHead}),
+    ...Array(spec.segments).fill(0).map((_, i) => game.CentipedePiece({...spec, x: spec.startX - spec.width*(i+1), y: spec.startY, sprite: game.sprites.centipedeBody})),
+    game.CentipedePiece({...spec, x: spec.startX, y: spec.startY, sprite: game.sprites.centipedeHead}),
   ];
 
   const update = (elapsedTime) => {
@@ -34,7 +70,7 @@ game.Centipede = (spec) => {
   }
   
   const intersects = (object) => {
-    return segments.filter((segment) => segment.intersects(object)).length > 0;
+    return segments.filter((segment) => segment.intersects(object)).length;
   }
 
   const onBulletCollision = (bullet) => {
@@ -50,17 +86,20 @@ game.Centipede = (spec) => {
       game.score += segment.sprite === game.sprites.centipedeHead ? 20 : 5;
       game.sounds.enemy_hit.load();
       game.sounds.enemy_hit.play();
-      if (segmentIndex > 0) {
-        segments[segmentIndex-1].sprite = game.sprites.centipedeHead;
-      }
       segments.splice(segmentIndex, 1);
     }
     bullet.alive = false;
   }
 
   const onMushroomCollision = (mushroom) => {
-    const segment = segments.find((segment) => segment.intersects(mushroom));
+    segments.find((segment) => segment.intersects(mushroom)).onMushroomCollision(mushroom);
   }
 
-  return {update, draw, segments, intersects, onBulletCollision, onMushroomCollision};
+  const onPlayerCollision = (player) => {
+    player.kill();
+  }
+
+  const alive = () => segments.length ? true : false; 
+
+  return {update, draw, segments, intersects, onBulletCollision, onMushroomCollision, onPlayerCollision, alive};
 }

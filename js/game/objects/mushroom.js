@@ -1,6 +1,5 @@
 game.Mushroom = (spec) => {
   spec.state = spec.state ?? 4;
-  spec.poisoned = spec.poisoned ?? false;
   const {mushX, mushY} = spec;
   const objectSpec = {...spec};
   objectSpec.x = mushX * objectSpec.width;

@@ -6,27 +6,16 @@ game.Player = (spec) => {
   object.bulletTimer = spec.bulletTimer ?? 150;
   object.maxPlayerHeight = spec.maxPlayerHeight ?? game.height - object.height*6;
   object.elapsedBulletTimer = 0;
+  object.lives = spec.lives ?? 3;
 
   const parentUpdate = object.update; 
   object.update = (elapsedTime) => {
-    if (object.poisoned) {
-      object.dy = 0.5;
-      object.elapsedPoisonedTimer += elapsedTime;
-      if (object.elapsedPoisonedTimer > object.poisonedTimer) {
-        object.poisoned = false;
-        object.elapsedPoisonedTimer = 0;
-      }
-    }
     parentUpdate(elapsedTime);
     object.x = Math.max(0, Math.min(object.x, game.width - object.width));
     object.y = Math.max(object.maxPlayerHeight, Math.min(object.y, game.height - object.height));
     object.dx = object.dy = 0;
     object.elapsedBulletTimer += elapsedTime;
   };
-  object.poison = () => {
-    object.poisoned = true;
-    object.elapsedPoisonedTimer = 0;
-  }
   object.moveUp = () => {
     object.dy = -0.75;
   }
@@ -53,6 +42,20 @@ game.Player = (spec) => {
     if (mushroom.poisoned) {
       mushroom.state = 0;
       object.poison();
+    }
+    if (mushroom.x > object.x) {
+      object.x = mushroom.x - mushroom.width;
+    }
+    if (mushroom.x < object.x) {
+      object.x = mushroom.x + mushroom.width;
+    }
+  }
+
+  object.kill = () => {
+    object.lives--;
+    game.resetObjects();
+    if (object.lives == 0) {
+      game.gameOver();
     }
   }
 

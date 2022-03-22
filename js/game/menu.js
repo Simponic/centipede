@@ -8,7 +8,7 @@ menu.initialize = () => {
     "moveDown": "ArrowDown",
     "moveLeft": "ArrowLeft",
     "moveRight": "ArrowRight",
-    "shoot": "Space",
+    "shoot": " ",
   };
 }
 
@@ -24,6 +24,12 @@ menu.escapeEventListener = (e) => {
   }
 }
 
+menu.showMenu = () => {
+  menu.draw();
+  game.stopped = true;
+  window.addEventListener("keydown", menu.escapeEventListener);
+}
+
 menu.reRegisterKeys = () => {
   Object.keys(game.keyboard.handlers).map(key => game.keyboard.unregisterCommand(key));
   game.keyboard.registerCommand(menu.controls.moveUp, game.player.moveUp);
@@ -31,12 +37,14 @@ menu.reRegisterKeys = () => {
   game.keyboard.registerCommand(menu.controls.moveLeft, game.player.moveLeft);
   game.keyboard.registerCommand(menu.controls.moveRight, game.player.moveRight);
   game.keyboard.registerCommand(menu.controls.shoot, game.player.shoot);
-  game.keyboard.registerCommand("Escape", () => { 
-    menu.draw();
-    game.stopped = true;
-    window.addEventListener("keydown", menu.escapeEventListener);
-  });
+  game.keyboard.registerCommand("Escape", menu.showMenu);
   localStorage.setItem("controls", JSON.stringify(menu.controls));
+}
+
+menu.addScore = (score) => {
+  menu.scores.push(score);
+  menu.scores.sort((a, b) => b - a);
+  localStorage.setItem("scores", JSON.stringify(menu.scores));
 }
 
 menu.hide = () => {
@@ -44,6 +52,10 @@ menu.hide = () => {
   menuElement.style.display = "none";
   menu.reRegisterKeys();
   window.removeEventListener("keydown", menu.escapeEventListener);
+  if (menu.onHide) {
+    menu.onHide();
+    menu.onHide = null;
+  }
   game.resume();
 }
 
@@ -70,21 +82,22 @@ menu.draw = () => {
     menuElement.innerHTML += `
       <div class='menu-button' onclick='menu.setState("controls")'>Change Controls</div>
       <div class='menu-button' onclick='menu.setState("credits")'>Credits</div>
+      <div class='menu-button' onclick='menu.setState("scores")'>High Scores</div>
     `;
   }
   else if (menu.state == "controls") {
     menuElement.innerHTML += `
       <div>
         <p>
-          Move left: <button id="moveLeft" onclick='menu.listenFor("moveLeft", "moveLeft")'>${menu.controls.moveLeft}</button>
+          Move left: <button id="moveLeft" onfocus='menu.listenFor("moveLeft", "moveLeft")'>${menu.controls.moveLeft}</button>
           <br>
-          Move right: <button id="moveRight" onclick='menu.listenFor("moveRight", "moveRight")'>${menu.controls.moveRight}</button>
+          Move right: <button id="moveRight" onfocus='menu.listenFor("moveRight", "moveRight")'>${menu.controls.moveRight}</button>
           <br>
-          Move up: <button id="moveUp" onclick='menu.listenFor("moveUp", "moveUp")'>${menu.controls.moveUp}</button>
+          Move up: <button id="moveUp" onfocus='menu.listenFor("moveUp", "moveUp")'>${menu.controls.moveUp}</button>
           <br>
-          Move down: <button id="moveDown" onclick='menu.listenFor("moveDown", "moveDown")'>${menu.controls.moveDown}</button>
+          Move down: <button id="moveDown" onfocus='menu.listenFor("moveDown", "moveDown")'>${menu.controls.moveDown}</button>
           <br>
-          Shoot: <button id="shoot" onclick='menu.listenFor("shoot", "shoot")'>${menu.controls.shoot}</button>
+          Shoot: <button id="shoot" onfocus='menu.listenFor("shoot", "shoot")'>${menu.controls.shoot}</button>
         </p>
       </div>
     `
@@ -99,6 +112,24 @@ menu.draw = () => {
           Some code from <a href="https://www.usu.edu/directory/?person=56DB0BFCCAEECEC8D5">Dr. Mathias</a>
           <br>
           Developed by Logan Hunt
+        </p>
+      </div>
+    `
+  } else if (menu.state == "scores") {
+    menuElement.innerHTML += `
+      <div>
+        <p>
+        ${menu.scores.map((score, index) => `${index + 1}: ${score}<br>`).join("")}
+        </p>
+      </div>
+    `
+  } else if (menu.state == "game-over") {
+    menuElement.innerHTML += `
+      <div>
+        <p>
+          Game Over
+          <br>
+          Your final score was: ${game.score}
       </div>
     `
   }

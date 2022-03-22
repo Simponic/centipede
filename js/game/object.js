@@ -1,35 +1,51 @@
-game.Object = (spec={x, y, dx, dy, rot, drot, width, height, sprite}) => {
-  spec.dx = spec.dx ?? 0;
-  spec.dy = spec.dy ?? 0;
-  spec.rot = spec.rot ?? 0;
-  spec.drot = spec.drot ?? 0;
-  spec.alive = spec.alive ?? true;
-  
-  spec.intersects = (other) => {
-    if (spec.x + spec.width < other.x) {
+game.Object = (object) => {
+  object.dx = object.dx ?? 0;
+  object.dy = object.dy ?? 0;
+  object.rot = object.rot ?? 0;
+  object.drot = object.drot ?? 0;
+  object.alive = object.alive ?? true;
+
+  object.poisonedTimer = object.poisonedTimer ?? 4000;
+  object.poisoned = false;
+  object.elapsedPoisonedTimer = 0;
+  object.poison = () => {
+    object.poisoned = true;
+    object.elapsedPoisonedTimer = 0;
+  }
+
+  object.intersects = (other) => {
+    if (object.x + object.width <= other.x) {
       return false;
     }
-    if (spec.x > other.x + other.width) {
+    if (object.x >= other.x + other.width) {
       return false;
     }
-    if (spec.y + spec.height < other.y) {
+    if (object.y + object.height <= other.y) {
       return false;
     }
-    if (spec.y > other.y + other.height) {
+    if (object.y >= other.y + other.height) {
       return false;
     }
     return true;
   }
 
-  spec.update = (elapsedTime) => {
-    spec.x += spec.dx*elapsedTime;
-    spec.y += spec.dy*elapsedTime;
-    spec.rot += spec.drot*elapsedTime;
+  object.update = (elapsedTime) => {
+    if (object.poisoned && object.y >= game.height - object.height) {
+      object.elapsedPoisonedTimer += elapsedTime;
+      if (object.elapsedPoisonedTimer > object.poisonedTimer) {
+        object.poisoned = false;
+        object.elapsedPoisonedTimer = 0;
+      }
+    }
+
+    object.x += (object.poisoned ? 0 : object.dx)*elapsedTime;
+    object.y += (object.poisoned ? 0.2 : object.dy)*elapsedTime;
+    object.rot += object.drot*elapsedTime;
   };
 
-  spec.draw = (elapsedTime) => {
-    spec.sprite.draw(elapsedTime, spec);
+  object.draw = (elapsedTime) => {
+    object.sprite.draw(elapsedTime, object);
   };
 
-  return spec;
+  return object;
 };
